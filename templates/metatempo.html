@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaTempo - NASA Space Apps Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .section-hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .section-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-300">
+
+    <!-- Header & Navigation -->
+    <header class="bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-white flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-cyan-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                </svg>
+                MetaTempo
+            </a>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#visualizador" class="hover:text-cyan-400 transition-colors">Visualizador</a>
+                <a href="#alertas" class="hover:text-cyan-400 transition-colors">Alertas</a>
+                <a href="#about" class="hover:text-cyan-400 transition-colors">Nosotros</a>
+                <a href="#registro" class="bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-bold py-2 px-4 rounded-lg transition-transform hover:scale-105">Regístrate</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#visualizador" class="block py-2 hover:text-cyan-400">Visualizador</a>
+            <a href="#alertas" class="block py-2 hover:text-cyan-400">Alertas</a>
+            <a href="#about" class="block py-2 hover:text-cyan-400">Nosotros</a>
+            <a href="#registro" class="block mt-2 bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-bold py-2 px-4 rounded-lg text-center">Regístrate</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6">
+        
+        <!-- Hero Section -->
+        <section id="home" class="text-center py-20 md:py-32 fade-in">
+            <h1 class="text-4xl md:text-6xl font-black text-white leading-tight mb-4">
+                Respira un futuro más limpio y seguro con <span class="text-cyan-400">MetaTempo</span>.
+            </h1>
+            <p class="max-w-3xl mx-auto text-lg md:text-xl text-slate-400 mb-8">
+                Utilizamos datos satelitales de la NASA en tiempo real para visualizar, predecir y alertarte sobre la calidad del aire, protegiendo tu salud y la de tu comunidad.
+            </p>
+            <a href="#registro" class="bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-bold py-3 px-8 rounded-lg text-lg transition-transform hover:scale-105 inline-block">
+                Recibe Alertas Personalizadas
+            </a>
+        </section>
+
+        <!-- Visualizer Section -->
+        <section id="visualizador" class="py-20 scroll-target">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">Visualizador de Datos TEMPO</h2>
+                <p class="max-w-2xl mx-auto mt-4 text-slate-400">
+                    Explora los niveles de contaminantes en tu región con datos actualizados directamente del satélite TEMPO de la NASA. Nuestra plataforma te permite ver la calidad del aire casi en tiempo real.
+                </p>
+            </div>
+            <div class="bg-slate-800 rounded-xl shadow-2xl p-4 md:p-6 border border-slate-700">
+                <img src="https://placehold.co/1200x600/1e293b/94a3b8?text=Simulación+de+Mapa+Interactivo" alt="Simulación de mapa interactivo mostrando la calidad del aire" class="rounded-lg w-full h-auto object-cover">
+                 <div class="mt-4 text-center text-sm text-slate-500">
+                    <!-- Placeholder for interactive elements -->
+                    <p>Aquí se mostraría el mapa interactivo con la visualización de datos de calidad del aire.</p>
+                </div>
+            </div>
+        </section>
+            <!-- NUEVO: Tendencias históricas -->
+            <div class="mt-8 bg-slate-800 rounded-xl shadow-2xl p-4 md:p-6 border border-slate-700">
+                <h3 class="text-xl font-bold text-cyan-400 mb-4">Tendencias históricas (NO₂ y HCHO)</h3>
+                <div class="grid md:grid-cols-3 gap-4 items-end">
+                    <div class="md:col-span-2">
+                        <canvas id="ts-chart" height="120"></canvas>
+                    </div>
+                    <div>
+                        <p id="ts-status" class="text-sm text-slate-400">Cargando series locales (NO₂ y HCHO)...</p>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Alerts Section -->
+        <section id="alertas" class="py-20 scroll-target">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">Alertas Inteligentes y Predicciones</h2>
+                <p class="max-w-2xl mx-auto mt-4 text-slate-400">
+                    Nuestro sistema no solo te informa, te protege. Regístrate para recibir notificaciones personalizadas cuando la calidad del aire en tu zona represente un riesgo para tu salud.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-slate-800 p-8 rounded-xl border border-slate-700">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-2">Datos en Tiempo Real</h3>
+                    <p>Conectamos directamente con la misión TEMPO para ofrecerte la información más reciente sobre contaminantes como NO₂, ozono y formaldehído.</p>
+                </div>
+                <div class="bg-slate-800 p-8 rounded-xl border border-slate-700">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-2">Predicciones Basadas en IA</h3>
+                    <p>Analizamos patrones y tendencias para predecir la calidad del aire en las próximas horas, permitiéndote planificar tus actividades de forma segura.</p>
+                </div>
+                <div class="bg-slate-800 p-8 rounded-xl border border-slate-700">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-2">Alertas Personalizadas</h3>
+                    <p>Si eres parte de un grupo vulnerable, adaptamos las alertas a tus necesidades específicas, enviándote avisos a tu teléfono o correo electrónico.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="py-20 bg-slate-800/50 rounded-xl my-20 scroll-target">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">Sobre el Proyecto y el Equipo</h2>
+            </div>
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-4">¿Quiénes somos?</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Somos Lambda 4.0, un equipo conformado por 5 estudiantes del Tec de Monterrey comprometidos con el bienestar de la población. Al ver que el Hackathon Nasa International Space Apps Challenge estaba cerca, decidimos que esta sería la oportunidad perfecta para demostrar nuestras habilidades y usar nuestros conocimientos para hacer del mundo un lugar mejor. Nosotros elegimos el reto de “From EarthData to Action: Cloud Computing with Earth Observation Data for Predicting Cleaner, Safer Skies” y usando nuestra habilidad de desarrollo web, llegamos a la idea de MetaTempo, una página web que utiliza datos a tiempo real para alertar a personas vulnerables si existe un exceso de contaminante de aire cerca de su ubicación y hacer predicciones de calidad de aire tomando en cuenta los distintos patrones de los contaminantes del aire.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-4">Contacto</h3>
+                    <ul class="space-y-3 text-slate-400">
+                        <li><strong>Adrián Alejandro Gerardo Arias:</strong><br> <a href="mailto:aadriang@gmail.com" class="text-cyan-500 hover:underline">aadriang@gmail.com</a></li>
+                        <li><strong>Francisco Eduardo Miker Querol:</strong><br> <a href="mailto:pacomikerol@gmail.com" class="text-cyan-500 hover:underline">pacomikerol@gmail.com</a></li>
+                        <li><strong>Sebastián Tamayo Quinteros:</strong><br> <a href="mailto:sebastq027@gmail.com" class="text-cyan-500 hover:underline">sebastq027@gmail.com</a></li>
+                        <li><strong>Maximiliano Corrales Rojas:</strong><br> <a href="mailto:maxcorralesr@gmail.com" class="text-cyan-500 hover:underline">maxcorralesr@gmail.com</a></li>
+                        <li><strong>Sebastián Tanori Gallardo:</strong><br> <a href="mailto:sebastiantanori8@gmail.com" class="text-cyan-500 hover:underline">sebastiantanori8@gmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration Section -->
+        <section id="registro" class="py-20 scroll-target">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">Crea tu Cuenta en MetaTempo</h2>
+                <p class="max-w-2xl mx-auto mt-4 text-slate-400">
+                   Únete a nuestra comunidad para recibir alertas y contribuir a un cielo más limpio. Elige el tipo de cuenta que mejor se adapte a tus necesidades.
+                </p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto bg-slate-800 p-8 rounded-xl shadow-2xl border border-slate-700">
+                <div id="user-type-selection">
+                    <div class="mb-4">
+                        <label class="block mb-2 font-bold text-lg text-white">¿Qué tipo de uso le darás a la página?</label>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <button class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-bold py-3 px-4 rounded-lg transition-transform hover:scale-105" onclick="showForm('personal')">Uso Personal</button>
+                            <button class="w-full bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg transition-transform hover:scale-105" onclick="showForm('institucional')">Uso Institucional</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Form -->
+                <form id="personal-form" class="hidden space-y-4" onsubmit="return createPersonalAccount()">
+                    <h3 class="text-2xl font-bold text-white text-center">Registro Personal</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="p-nombre" class="block mb-1 font-medium">Nombre:</label>
+                            <input type="text" id="p-nombre" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                        </div>
+                        <div>
+                            <label for="p-email" class="block mb-1 font-medium">Correo Electrónico:</label>
+                            <input type="email" id="p-email" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                        </div>
+                    </div>
+                     <div>
+                        <label for="p-password" class="block mb-1 font-medium">Contraseña:</label>
+                        <input type="password" id="p-password" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="p-edad" class="block mb-1 font-medium">Edad:</label>
+                            <input type="number" id="p-edad" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                        </div>
+                        <div>
+                            <label for="p-sexo" class="block mb-1 font-medium">Sexo:</label>
+                            <select id="p-sexo" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                                <option value="" disabled selected>Selecciona...</option>
+                                <option value="hombre">Hombre</option>
+                                <option value="mujer">Mujer</option>
+                                <option value="otro">Otro</option>
+                                <option value="no_decir">Prefiero no decirlo</option>
+                            </select>
+                        </div>
+                         <div>
+                            <label for="p-telefono" class="block mb-1 font-medium">Teléfono:</label>
+                            <input type="tel" id="p-telefono" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <!-- Región se obtiene automáticamente por IP, no se solicita al usuario -->
+                        <div>
+                            <label for="p-oficio" class="block mb-1 font-medium">Oficio:</label>
+                            <select id="p-oficio" onchange="checkOther(this.value, 'p-otro-oficio-container')" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                                <option value="" disabled selected>Selecciona tu oficio</option>
+                                <optgroup label="Salud y Cuidado">
+                                    <option value="admin_escuela">Administrador escolar</option>
+                                    <option value="gerente_geriatrico">Gerente de centro geriátrico</option>
+                                    <option value="entrenador_atletico">Entrenador/Director atlético</option>
+                                </optgroup>
+                                <optgroup label="Sector Público y Respuesta">
+                                    <option value="funcionario_gobierno">Funcionario gubernamental/Líder municipal</option>
+                                    <option value="autoridad_transporte">Autoridad de transporte</option>
+                                    <option value="depto_parques">Departamento de parques y recreación</option>
+                                    <option value="oficial_salud_ambiental">Oficial de salud ambiental (distrito escolar)</option>
+                                    <option value="gestion_incendios">Equipo de gestión de incendios forestales</option>
+                                    <option value="org_desastres">Organización de preparación para desastres</option>
+                                    <option value="servicio_meteorologico">Proveedor de servicios meteorológicos</option>
+                                    <option value="comunicacion_crisis">Especialista en comunicación de crisis</option>
+                                </optgroup>
+                                 <optgroup label="Otros Sectores">
+                                    <option value="residente_industrial">Residente en zona industrial</option>
+                                    <option value="turismo">Junta de turismo</option>
+                                    <option value="evaluador_riesgos">Evaluador de riesgos de seguros</option>
+                                    <option value="ciencia_ciudadana">Coordinador de ciencia ciudadana</option>
+                                    <option value="otro">Otro</option>
+                                 </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="p-otro-oficio-container" class="hidden">
+                        <label for="p-otro-oficio" class="block mb-1 font-medium">Por favor, especifica tu oficio:</label>
+                        <input type="text" id="p-otro-oficio" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">¿Te consideras parte de un grupo vulnerable a la calidad del aire?</label>
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="vulnerable" value="si" class="form-radio text-cyan-500" onclick="showVulnerableOptions(true)"> Sí</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="vulnerable" value="no" class="form-radio text-cyan-500" onclick="showVulnerableOptions(false)" checked> No</label>
+                        </div>
+                    </div>
+                    <div id="vulnerable-options" class="hidden">
+                        <label for="vulnerable-group" class="block mb-1 font-medium">¿A cuál perteneces?</label>
+                        <select id="vulnerable-group" onchange="checkVulnerableOther(this.value)" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            <option value="" disabled selected>Selecciona un grupo</option>
+                            <option value="embarazada">Mujeres embarazadas</option>
+                            <option value="niños">Niños</option>
+                            <option value="cardiovascular">Personas con enfermedades cardiovasculares</option>
+                            <option value="respiratoria">Personas con enfermedades respiratorias</option>
+                            <option value="adulto_mayor">Adultos mayores</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div id="vulnerable-other-container" class="hidden">
+                        <label for="vulnerable-other-text" class="block mb-1 font-medium">Por favor, especifica tu condición:</label>
+                        <input type="text" id="vulnerable-other-text" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                    <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-900 font-bold py-3 px-4 rounded-lg transition-transform hover:scale-105">Crear Cuenta</button>
+                </form>
+
+                <!-- Institutional Form -->
+                <form id="institucional-form" class="hidden space-y-4" onsubmit="return createInstitutionalAccount()">
+                     <h3 class="text-2xl font-bold text-white text-center">Registro Institucional</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                         <div>
+                            <label for="i-nombre" class="block mb-1 font-medium">Nombre de la institución:</label>
+                            <input type="text" id="i-nombre" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                        </div>
+                        <div>
+                            <label for="i-email" class="block mb-1 font-medium">Correo Electrónico:</label>
+                            <input type="email" id="i-email" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="i-password" class="block mb-1 font-medium">Contraseña:</label>
+                            <input type="password" id="i-password" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                        </div>
+                        <div>
+                            <label for="i-telefono" class="block mb-1 font-medium">Teléfono para Alertas:</label>
+                            <input type="tel" id="i-telefono" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                        </div>
+                    </div>
+                     <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="i-region" class="block mb-1 font-medium">Región:</label>
+                            <select id="i-region" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                                <option value="" disabled selected>Selecciona una región</option>
+                                <option value="norteamerica">Norteamérica</option>
+                                <option value="suramerica">Suramérica</option>
+                                <option value="europa">Europa</option>
+                                <option value="africa_norte">África Norte</option>
+                                <option value="africa_sur">África Sur</option>
+                                <option value="asia_este">Asia Este</option>
+                                <option value="asia_oeste">Asia Oeste</option>
+                                <option value="oceania">Oceanía</option>
+                            </select>
+                        </div>
+                         <div>
+                            <label for="i-sector" class="block mb-1 font-medium">Sector Institucional:</label>
+                            <select id="i-sector" onchange="checkOther(this.value, 'i-otro-sector-container')" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                                <option value="" disabled selected>Selecciona un sector</option>
+                                <option value="gobierno">Gobierno y municipalidades</option>
+                                <option value="transporte">Autoridades de transporte</option>
+                                <option value="educacion">Sector educativo</option>
+                                <option value="salud_cuidado">Cuidado de la salud</option>
+                                <option value="parques_recreacion">Parques, recreación y deportes</option>
+                                <option value="turismo">Turismo</option>
+                                <option value="emergencias">Respuesta a emergencias</option>
+                                <option value="meteorologia">Servicios meteorológicos</option>
+                                <option value="seguros">Seguros y evaluación de riesgos</option>
+                                <option value="ciencia_comunitaria">Ciencia ciudadana</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="i-otro-sector-container" class="hidden">
+                        <label for="i-otro-sector" class="block mb-1 font-medium">Por favor, especifica tu sector:</label>
+                        <input type="text" id="i-otro-sector" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                    <div>
+                        <label for="i-actividad" class="block mb-1 font-medium">Describe la actividad principal que realizan:</label>
+                        <textarea id="i-actividad" rows="3" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg transition-transform hover:scale-105">Crear Cuenta Institucional</button>
+                </form>
+                
+                <div id="welcome-message" class="hidden text-center text-green-400 text-xl font-bold p-8"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900/80 border-t border-slate-800 mt-20">
+        <div class="container mx-auto px-6 py-6 text-center text-slate-500">
+            <p>&copy; 2025 MetaTempo - Lambda 4.0. Un proyecto para el NASA International Space Apps Challenge.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Registration form logic
+        function showForm(formType) {
+            document.getElementById('user-type-selection').classList.add('hidden');
+            if (formType === 'personal') {
+                document.getElementById('personal-form').classList.remove('hidden');
+            } else if (formType === 'institucional') {
+                document.getElementById('institucional-form').classList.remove('hidden');
+            }
+        }
+
+        function checkOther(selectedValue, otherContainerId) {
+            const otherContainer = document.getElementById(otherContainerId);
+            if (selectedValue === 'otro') {
+                otherContainer.classList.remove('hidden');
+                otherContainer.querySelector('input').required = true;
+            } else {
+                otherContainer.classList.add('hidden');
+                otherContainer.querySelector('input').required = false;
+            }
+        }
+
+        function showVulnerableOptions(isVulnerable) {
+            const vulnerableOptions = document.getElementById('vulnerable-options');
+            if (isVulnerable) {
+                vulnerableOptions.classList.remove('hidden');
+                vulnerableOptions.querySelector('select').required = true;
+            } else {
+                vulnerableOptions.classList.add('hidden');
+                vulnerableOptions.querySelector('select').required = false;
+                // Also hide the 'other' text box if 'No' is selected
+                document.getElementById('vulnerable-other-container').classList.add('hidden');
+                document.getElementById('vulnerable-other-text').required = false;
+            }
+        }
+        
+        function checkVulnerableOther(selectedValue) {
+            const otherContainer = document.getElementById('vulnerable-other-container');
+            const otherInput = otherContainer.querySelector('input');
+            if (selectedValue === 'otro') {
+                otherContainer.classList.remove('hidden');
+                otherInput.required = true;
+            } else {
+                otherContainer.classList.add('hidden');
+                otherInput.required = false;
+            }
+        }
+
+        function showWelcomeMessage(formId, message) {
+            document.getElementById(formId).classList.add('hidden');
+            const welcomeDiv = document.getElementById('welcome-message');
+            welcomeDiv.textContent = message;
+            welcomeDiv.classList.remove('hidden');
+        }
+
+        function createPersonalAccount() {
+            const formData = new FormData();
+            formData.append('p-nombre', document.getElementById('p-nombre').value);
+            formData.append('p-email', document.getElementById('p-email').value);
+            formData.append('p-password', document.getElementById('p-password').value);
+            formData.append('p-edad', document.getElementById('p-edad').value);
+            formData.append('p-region', document.getElementById('p-region').value);
+            formData.append('p-telefono', document.getElementById('p-telefono').value);
+            formData.append('p-sexo', document.getElementById('p-sexo').value);
+            formData.append('p-oficio', document.getElementById('p-oficio').value);
+            formData.append('p-otro-oficio', document.getElementById('p-otro-oficio').value);
+            formData.append('vulnerable', document.querySelector('input[name="vulnerable"]:checked').value);
+            formData.append('vulnerable-group', document.getElementById('vulnerable-group').value);
+            
+            fetch('/register_personal', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showWelcomeMessage('personal-form', data.message);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al procesar el registro');
+            });
+            return false; // Previene el envío normal del formulario
+        }
+        
+        function createInstitutionalAccount() {
+            const nombre = document.getElementById('i-nombre').value;
+            const message = `¡Gracias por registrar a ${nombre}! Su cuenta institucional está lista.`;
+            showWelcomeMessage('institucional-form', message);
+            return false; // Prevents actual form submission for this demo
+        }
+
+        // Scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('section-visible');
+                    entry.target.classList.remove('section-hidden');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.scroll-target').forEach(section => {
+            section.classList.add('section-hidden');
+            observer.observe(section);
+        });
+
+        // NUEVO: lógica para "Historical Trends"
+        let tsChart = null;
+
+        function renderTsChart(rows) {
+            const labels = rows.map(r => r.date);
+            const no2 = rows.map(r => r.no2);
+            const hch = rows.map(r => r.hch);
+
+            const ctx = document.getElementById('ts-chart').getContext('2d');
+            const datasets = [
+                {
+                    label: 'NO₂',
+                    data: no2,
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.15)',
+                    tension: 0.25
+                },
+                {
+                    label: 'HCH',
+                    data: hch,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                    tension: 0.25
+                }
+            ];
+
+            if (tsChart) {
+                tsChart.data.labels = labels;
+                tsChart.data.datasets[0].data = no2;
+                tsChart.data.datasets[1].data = hch;
+                tsChart.update();
+                return;
+            }
+
+            tsChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { ticks: { color: '#94a3b8' } },
+                        y: { ticks: { color: '#94a3b8' }, beginAtZero: false }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#e2e8f0' } },
+                        tooltip: { mode: 'index', intersect: false }
+                    }
+                }
+            });
+        }
+
+        // Auto-cargar series desde el servidor
+        (async function loadSeries() {
+            const status = document.getElementById('ts-status');
+            try {
+                const res = await fetch('/api/timeseries');
+                const data = await res.json();
+                if (data.success && Array.isArray(data.data) && data.data.length) {
+                    status.textContent = `Mostrando ${data.data.length} puntos.`;
+                    renderTsChart(data.data);
+                } else {
+                    status.textContent = 'No se encontraron datos locales (.csv) para NO₂/HCHO en el folder.';
+                }
+            } catch (e) {
+                status.textContent = 'Error al cargar series: ' + e.message;
+            }
+        })();
+    </script>
+</body>
+</html>
+

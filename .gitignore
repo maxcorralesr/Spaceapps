@@ -1,0 +1,37 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+
+# Entornos
+.env
+.venv/
+venv/
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Artefactos del proyecto
+login_database.db
+user_details.log
+*.sqlite
+*.db
+
+# Archivos grandes comunes (dejamos CSV permitidos)
+*.parquet
+*.feather
+*.zip
+*.tar.gz
+
+# Ignorar CSV masivos locales de TEMPO
+datos_tempo_no2_completo.csv
+datos_tempo_hcho_completo.csv
+
+# IDE
+.vscode/
+.idea/
+
+# Node (por si acaso)
+node_modules/

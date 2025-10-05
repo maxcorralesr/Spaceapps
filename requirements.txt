@@ -1,0 +1,22 @@
+# Dependencias para el sistema de login completo
+Flask==2.3.3
+requests==2.31.0
+aiogram==3.1.1
+aiohttp==3.8.5
+
+pandas==2.2.2
+
+# Módulos estándar de Python utilizados:
+# - sqlite3: Para manejo de base de datos SQLite
+# - hashlib: Para hash de contraseñas
+# - getpass: Para entrada segura de contraseñas
+# - re: Para validación de expresiones regulares
+# - datetime: Para manejo de fechas y timestamps
+# - os: Para operaciones del sistema de archivos
+# - time: Para manejo de tiempo en el bot
+# - json: Para manejo de datos JSON
+
+# Dependencias opcionales para mejoras futuras:
+# bcrypt==4.0.1         # Para hash más seguro de contraseñas
+# python-dotenv==1.0.0  # Para manejo de variables de entorno
+# pytest==7.4.2        # Para pruebas unitarias más avanzadas
